@@ -24,5 +24,5 @@ else:
 with open(READ_PATH_, 'r') as file:
     text = file.read()
 
-tokens = tokenizer.text2word(text)
+tokens = tokenizer.basic_text_to_word(text)
 print(tokens[:10])

@@ -32,6 +32,6 @@ if __name__ == "__main__":
     URL_ = ("https://raw.githubusercontent.com/rasbt/"
        "LLMs-from-scratch/main/ch02/01_main-chapter-code/"
        "the-verdict.txt")
-    WRITE_PATH_ = osp.join(Commons().fileDir, 'data/the-verdict.txt')
+    WRITE_PATH_ = osp.join(Commons().parentDir, 'scratchpad/data/the-verdict.txt')
 
     download_text(URL_, WRITE_PATH_)

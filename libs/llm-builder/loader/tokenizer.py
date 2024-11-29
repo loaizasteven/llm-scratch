@@ -38,6 +38,9 @@ class SimpleTokenizer(BaseModel):
 
     def encode(self, text:str) -> list:
         preprocessed = self.preprocessing(text)
+        if not self.token2id:
+            self._initialize_vocab(text)
+            return self.token2id
 
         return [self.token2id[token] for token in preprocessed]
     
@@ -47,4 +50,3 @@ class SimpleTokenizer(BaseModel):
         text = " ".join([self.id2token[id] for id in ids])
         processed = re.sub(r'\s+ ([,.?!"()\'])', r'\1', text)   # remove spaces before punctuation
         return processed
-    

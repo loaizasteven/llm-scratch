@@ -9,6 +9,7 @@ Modifications:
 * Pydantic BaseModel is used to define the class.
 * SimpleTokenizer class handled vocab initialization and token encoding.
 * SimpleTokenizerV2 inherits SimpleTokenizer and adds special tokens.
+* cache method is used to store the results of the preprocessing function.
 """
 
 import re

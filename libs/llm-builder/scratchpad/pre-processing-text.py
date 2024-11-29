@@ -24,5 +24,6 @@ else:
 with open(READ_PATH_, 'r') as file:
     text = file.read()
 
-tokens = tokenizer.basic_text_to_word(text)
-print(tokens[:10])
+tokenizer = tokenizer.SimpleTokenizer()
+tokenizer._initialize_vocab(text)
+print(tokenizer.token2id)

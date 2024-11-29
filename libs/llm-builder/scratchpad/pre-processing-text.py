@@ -32,3 +32,5 @@ encoded = tokenizer.encode('Hi, I found the Brown Fox!')
 
 print(input_)
 print(tokenizer.decode(encoded))
+
+tokenizer.dump_vocab(_THIS_DIR / 'data/vocab.json')

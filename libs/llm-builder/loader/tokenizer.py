@@ -1,6 +1,19 @@
 # Method to tokenize a input text
+"""
+This module provides a simple tokenizer for text processing.
+It includes methods for tokenizing text, encoding text into token IDs,
+and decoding token IDs back into text. The tokenizer uses regular expressions
+to split text into tokens based on a specified pattern.
+
+Modifications:
+* Pydantic BaseModel is used to define the class.
+* SimpleTokenizer class handled vocab initialization and token encoding.
+* SimpleTokenizerV2 inherits SimpleTokenizer and adds special tokens.
+"""
 
 import re
+import json
+import os.path as osp
 
 from typing import Optional, List, Dict, Union
 from pydantic import BaseModel
@@ -75,3 +88,10 @@ class SimpleTokenizerV2(SimpleTokenizer):
             return self.token2id
 
         return [self.token2id.get(token, unknownId) for token in preprocessed]
+
+    def dump_vocab(self, path: str):
+        dir = osp.dirname(path)
+        for attr, obj in self.__dict__.items():
+            if isinstance(obj, dict):
+                savePath = osp.join(dir, f"{attr}.json")
+                json.dump(obj, open(savePath, 'w'), indent=4)  

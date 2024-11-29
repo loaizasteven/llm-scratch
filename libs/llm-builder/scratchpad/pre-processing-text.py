@@ -24,6 +24,11 @@ else:
 with open(READ_PATH_, 'r') as file:
     text = file.read()
 
-tokenizer = tokenizer.SimpleTokenizer()
+
+input_ = 'Hi, I found the Brown Fox!'
+tokenizer = tokenizer.SimpleTokenizerV2()
 tokenizer._initialize_vocab(text)
-print(tokenizer.token2id)
+encoded = tokenizer.encode('Hi, I found the Brown Fox!')
+
+print(input_)
+print(tokenizer.decode(encoded))

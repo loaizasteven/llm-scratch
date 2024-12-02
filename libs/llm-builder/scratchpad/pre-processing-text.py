@@ -25,12 +25,31 @@ with open(READ_PATH_, 'r') as file:
     text = file.read()
 
 
-input_ = 'Hi, I found the Brown Fox!'
-tokenizer = tokenizer.SimpleTokenizerV2()
-tokenizer._initialize_vocab(text)
-encoded = tokenizer.encode('Hi, I found the Brown Fox!')
+if __name__ == "__main__":
+    import argparse
+    from data import GPTDatasetV1
+    import tiktoken
 
-print(input_)
-print(tokenizer.decode(encoded))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--version', type=int, default=1)   
+    args = parser.parse_args()
 
-tokenizer.dump_vocab(_THIS_DIR / 'data/vocab.json')
+    if args.version == 1:
+        tokenizer = tokenizer.SimpleTokenizerV2()
+        tokenizer._initialize_vocab(text)
+
+        input_ = "Hi, I found the Brown Fox!"
+        encoded = tokenizer.encode(input_)
+        tokenizer.dump_vocab(_THIS_DIR / 'data/vocab.json')
+
+        print(input_)
+        print(tokenizer.decode(encoded))
+    else:
+
+        custom_dataset = GPTDatasetV1(
+            txt=text, 
+            tokenizer=tiktoken.get_encoding('gpt2'), 
+            maxLength=3,
+            stride=3
+        )
+        print(custom_dataset.inputIds[:5])

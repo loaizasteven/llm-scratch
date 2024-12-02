@@ -4,7 +4,6 @@ import urllib
 from urllib import request
 from urllib import error
 import os
-import json
 
 from pydantic import BaseModel
 from typing import Optional, Any, List

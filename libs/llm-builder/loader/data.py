@@ -13,8 +13,8 @@ from torch.utils.data import Dataset
 
 
 class GPTDatasetV1(BaseModel, Dataset):
-        txt: str =''
-        tokenizer: Any = None
+        txt: str
+        tokenizer: Any
         maxLength: Optional[int] = 1024
         stride: Optional[int] = 512
         inputIds: List[List[int]] = []
@@ -34,6 +34,10 @@ class GPTDatasetV1(BaseModel, Dataset):
         def __getitem__(self, idx):
             return self.input_ids[idx], self.target_ids[idx]
         
+
+class  CustomDataLoader(BaseModel):
+    pass
+
 
 def htmlParser(text: bytes) -> str:
     soup = BeautifulSoup(text, 'html.parser')

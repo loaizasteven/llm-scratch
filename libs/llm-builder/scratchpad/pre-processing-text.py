@@ -20,14 +20,13 @@ if os.path.exists(READ_PATH_):
 else:
     data.download_text(URL_, WRITE_PATH_)
 
-# Tokenize the text
 with open(READ_PATH_, 'r') as file:
-    text = file.read()
+        text = file.read()
 
 
 if __name__ == "__main__":
     import argparse
-    from data import GPTDatasetV1
+    from data import GPTDatasetV1, CustomDataLoader
     import tiktoken
 
     parser = argparse.ArgumentParser()
@@ -45,11 +44,16 @@ if __name__ == "__main__":
         print(input_)
         print(tokenizer.decode(encoded))
     else:
-
-        custom_dataset = GPTDatasetV1(
+        dataloader = CustomDataLoader(
             txt=text, 
-            tokenizer=tiktoken.get_encoding('gpt2'), 
-            maxLength=3,
-            stride=3
-        )
-        print(custom_dataset.inputIds[:5])
+            dataset='GPTDatasetV1',
+            batch_size=1,
+            max_length=4,
+            stride=1, 
+            shuffle=False
+        ).loader()
+
+        data_iter = iter(dataloader)
+        inputs, targets = next(data_iter)
+        print(f"Input \n: {inputs}")
+        print(f"Target \n: {targets}")

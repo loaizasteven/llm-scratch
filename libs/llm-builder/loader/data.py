@@ -5,37 +5,74 @@ from urllib import request
 from urllib import error
 import os
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, Any, List
 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+
+import tiktoken
 
 
 class GPTDatasetV1(BaseModel, Dataset):
         txt: str
         tokenizer: Any
-        maxLength: Optional[int] = 1024
+        max_length: Optional[int] = 1024
         stride: Optional[int] = 512
-        inputIds: List[List[int]] = []
-        targetIds: List[List[int]] = []
+        input_ids: List[List[int]] = []
+        target_ids: List[List[int]] = []
 
         def __init__(self, **data):
             super().__init__(**data)
+            self._initialize()
+
+        def _initialize(self):
             token_ids = self.tokenizer.encode(self.txt)
-
-            for i in range(0, len(token_ids) - data["maxLength"] + 1, data["stride"]):
-                self.inputIds.append(token_ids[i:i + data["maxLength"]])
-                self.targetIds.append(token_ids[i + 1:i + data["maxLength"] + 1])
-
+            for i in range(0, len(token_ids) - self.max_length + 1, self.stride):
+                self.input_ids.append(token_ids[i:i + self.max_length])
+                self.target_ids.append(token_ids[i + 1:i + self.max_length + 1])
+                
         def __len__(self):
             return len(self.input_ids)
         
         def __getitem__(self, idx):
             return self.input_ids[idx], self.target_ids[idx]
-        
+
 
 class  CustomDataLoader(BaseModel):
-    pass
+    txt: str
+    dataset: str
+    dataset_mapping: dict = {'GPTDatasetV1': GPTDatasetV1}
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    batch_size: int = 2
+    max_length: int = 256
+    stride: int = 128
+    shuffle: bool = True
+    drop_last: bool = True
+    num_workers: int = 0
+
+    
+    def custom_collate_fn(batch):
+        input_ids = [torch.tensor(item[0]) for item in batch]
+        target_ids = [torch.tensor(item[1]) for item in batch]
+        
+        # Pad sequences to the same length
+        input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=True, padding_value=0)
+        target_ids = torch.nn.utils.rnn.pad_sequence(target_ids, batch_first=True, padding_value=0)
+        
+        return input_ids, target_ids
+
+    def loader(self, encoder='gpt2'):
+        tokenizer = tiktoken.get_encoding(encoder)
+        dataset = self.dataset_mapping[self.dataset]
+        dataset = dataset(txt=self.txt, tokenizer=tokenizer, max_length=self.max_length, stride=self.stride, collate_fn=self.custom_collate_fn)
+        
+        return DataLoader(
+                    dataset, 
+                    batch_size=self.batch_size, 
+                    shuffle=self.shuffle, 
+                    drop_last=self.drop_last, 
+                    num_workers=self.num_workers
+                )
 
 
 def htmlParser(text: bytes) -> str:

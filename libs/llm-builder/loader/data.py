@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Any, List
 
 from torch.utils.data import Dataset, DataLoader
+import torch
 
 import tiktoken
 
@@ -51,7 +52,8 @@ class  CustomDataLoader(BaseModel):
     num_workers: int = 0
 
     
-    def custom_collate_fn(batch):
+    def custom_collate_fn(callable, batch):
+        "customize how individual data samples are batched together."
         input_ids = [torch.tensor(item[0]) for item in batch]
         target_ids = [torch.tensor(item[1]) for item in batch]
         
@@ -64,14 +66,15 @@ class  CustomDataLoader(BaseModel):
     def loader(self, encoder='gpt2'):
         tokenizer = tiktoken.get_encoding(encoder)
         dataset = self.dataset_mapping[self.dataset]
-        dataset = dataset(txt=self.txt, tokenizer=tokenizer, max_length=self.max_length, stride=self.stride, collate_fn=self.custom_collate_fn)
+        dataset = dataset(txt=self.txt, tokenizer=tokenizer, max_length=self.max_length, stride=self.stride)
         
         return DataLoader(
                     dataset, 
                     batch_size=self.batch_size, 
                     shuffle=self.shuffle, 
                     drop_last=self.drop_last, 
-                    num_workers=self.num_workers
+                    num_workers=self.num_workers,
+                    collate_fn=self.custom_collate_fn
                 )
 
 

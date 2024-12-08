@@ -1,0 +1,2 @@
+## Certificate Verify Failed
+When working with MacOS and running `data.py`, you may encounter **[SSL: CERTIFICATE_VERIFY_FAILED]**, see [stack**overflow**](https://stackoverflow.com/questions/52805115/certificate-verify-failed-unable-to-get-local-issuer-certificate) to solve this issue.

@@ -5,6 +5,23 @@ from torch import nn
 
 
 class SelfAttention(nn.Module):
+    """
+    Self-Attention Layer for Transformer Models (PyTorch)
+    This class implements a self-attention mechanism, which is a core component of transformer models. 
+    It computes attention scores between input sequences to capture dependencies and relationships.
+    Attributes:
+        d_in (int): Dimensionality of the input features.
+        d_out (int): Dimensionality of the output features.
+        qkv_bias (bool): Whether to include a bias term in the linear projections for query, key, and value.
+    Methods:
+        forward(x):
+            Computes the self-attention mechanism on the input tensor `x`.
+            Args:
+                x (torch.Tensor): Input tensor of shape (batch_size, seq_length, d_in).
+            Returns:
+                torch.Tensor: Output tensor of shape (batch_size, seq_length, d_out) after applying self-attention.
+    """
+ 
     def __init__(self, d_in: int, d_out: int, dqv_bias: bool = True):
         super().__init__()
         self.d_in = d_in

@@ -102,13 +102,12 @@ class MultiHeadAttentionWrapper(nn.Module):
     This class implements a multi-head attention mechanism, which is a core component of transformer models.
     It computes multiple attention heads in parallel and concatenates the results to provide a richer representation.
     """
-    def __init__(self, d_in, d_out, context_length, num_heads, dropout=0.1):
+    def __init__(self, d_in, d_out, context_length, num_heads, dropout=0.1, qkv_bias=False):
         super().__init__()
         self.heads = nn.ModuleList([
-            CausalAttention(d_in, d_out, context_length, dropout)
+            CausalAttention(d_in, d_out, context_length, dropout, qkv_bias)
             for _ in range(num_heads)
         ])
-        self.W_out = nn.Linear(d_out*num_heads, d_out)
     
     def forward(self, x):
         return torch.cat([head(x) for head in self.heads], dim=-1)

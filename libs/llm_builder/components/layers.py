@@ -100,7 +100,7 @@ class MultiHeadAttentionWrapper(nn.Module):
     """
     Stacked Multi-Head Attention Layer for Transformer Models (PyTorch)
     This class implements a multi-head attention mechanism, which is a core component of transformer models.
-    It computes multiple attention heads in parallel and concatenates the results to provide a richer representation.
+    It computes multiple attention heads sequentially and concatenates the results to provide a richer representation.
     """
     def __init__(self, d_in, d_out, context_length, num_heads, dropout=0.1, qkv_bias=False):
         super().__init__()

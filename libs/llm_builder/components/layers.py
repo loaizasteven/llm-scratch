@@ -171,3 +171,17 @@ class MultiHeadAttention(nn.Module):
         context_vector = context_vector.contiguous().view(b, num_tokens, self.d_out)
         context_vector = self.out_proj(context_vector)
         return context_vector
+
+class LayerNorm(nn.Module):
+    def __init__(self, emb_dim: int, eps: float = 1e-5):
+        super().__init__()
+        self.eps = eps
+        self.emb_dim = emb_dim
+        self.scale = nn.Parameter(torch.ones(emb_dim))
+        self.shift = nn.Parameter(torch.zeros(emb_dim))
+    
+    def forward(self, x):
+        mean = x.mean(dim=-1, keepdim=True)
+        var = x.var(dim=-1, keepdim=True, unbiased=False)
+        norm_x = (x - mean) / torch.sqrt(var + self.eps)
+        return self.scale * norm_x + self.shift
